@@ -4,12 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-  "start": "node --watch app.js"
+    "start": "node --watch app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security"
   }
 }
