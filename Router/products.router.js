@@ -2,9 +2,6 @@ const express = require ('express')
 const fs = require ('fs')
 const router = express.Router()
 
-// if (!fs.existsSync('products.json')) {
-//     fs.writeFileSync('products.json', JSON.stringify([]), 'utf8');
-// }
 
 //GET
  router.get('/products', (req, res) => {
@@ -14,7 +11,8 @@ const router = express.Router()
         if (err)  return res.status(404).json({ message: 'Producto no encontrado' });
         
         const products = JSON.parse(data)
-        const limit = req.query.limit
+        let limit = parseInt(req.query.limit) 
+  
 
         if (limit) res.json(products.slice(0, limit))
 
@@ -23,7 +21,7 @@ const router = express.Router()
  })
 
 
-router.get('/products/:pid', (req, res) => {
+router.get('/products/:pid', (req, res) => { 
 
     const id = parseInt(req.params.pid)
 
@@ -34,7 +32,7 @@ router.get('/products/:pid', (req, res) => {
         const products = JSON.parse(data)
         const product = products.find(p => p.id === id)
 
-        if (!product) return res.status(404).json({message: "Este producto no existeeeee"})
+        if (!product) return res.status(404).json({message: "Este producto no existe"})
         
         res.json({product})
     })
@@ -56,7 +54,7 @@ router.post('/products', (req, res) => {
         
         if (!title || !description || !code || price === undefined || stock === undefined || !category) {
             return res.status(400).json({ message: 'Todos los campos son requeridos' });
-        }
+        } 
 
         products.push(newProduct)
 
@@ -75,7 +73,6 @@ router.put('/products/:pid', (req, res) => {
 
     let id = parseInt(req.params.pid)
     
-    //leemos archivo
     fs.readFile('productos.json', 'utf8', (err, data) => {
         
         if (err) return res.status(500).json({ error: 'Internal Server Error' })
@@ -90,10 +87,10 @@ router.put('/products/:pid', (req, res) => {
         if (description) product.description = description;
         if (code) product.code = code;
         if (price !== undefined) product.price = price;
-        if (stock !== undefined) product.stock = stock;
+        if (stock !== undefined) product.stock = stock; 
         if (category) product.category = category;
         
-        //actualizamos campos
+        
         fs.writeFile('productos.json', JSON.stringify(products, null, 2), err => {
             
             if (err) return res.status(400).json({ message: 'No se puede crearrrr' })
@@ -105,12 +102,28 @@ router.put('/products/:pid', (req, res) => {
 
 //DELETE
 router.delete('/products/:pid', (req, res) => {
-
+    
     let pid = parseInt(req.params.pid)
 
-    products = products.filter((product) => product.id !== pid)
+    fs.readFile('productos.json', 'utf8', (err, data) => {
 
-    res.json({message:`Producto con id ${pid} eliminado`}) 
+        if (err) return res.status(404).json({ message: 'Producto no encontrado' })
+
+        const products = JSON.parse(data)
+        const filteredProducts = products.filter((product) => product.id !== pid)
+    
+        res.json({message:`Producto con id ${pid} eliminado`}) 
+
+
+        fs.writeFile('productos.json', JSON.stringify(filteredProducts, null, 2), (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error al escribir nueva lista de productos' });
+            }
+ 
+            res.json({ message: `Producto con id ${pid} eliminado` });
+        });
+    })
+    
 })
 
 
