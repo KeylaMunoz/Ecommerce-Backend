@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "title": "Iphone 14",
+    "description": "12345467GB",
+    "code": "a1",
+    "price": 500,
+    "status": true,
+    "stock": 10,
+    "category": "celular"
+  },
+  {
+    "id": 2,
+    "title": "Iphone 15",
+    "description": "120GB",
+    "code": "a1",
+    "price": 500,
+    "status": true,
+    "stock": 10,
+    "category": "celular"
+  },
+  {
+    "id": 4,
+    "title": "Iphone 17",
+    "description": "120GB",
+    "code": "a1",
+    "price": 500,
+    "status": true,
+    "stock": 10,
+    "category": "celular"
+  },
+  {
+    "id": 5,
+    "title": "Iphone 17",
+    "description": "120GB",
+    "code": "a1",
+    "price": 10,
+    "status": true,
+    "stock": 10,
+    "category": "celular"
+  },
+  {
+    "id": 6,
+    "title": "Iphone 1",
+    "description": "120GB",
+    "code": "a1",
+    "price": 500,
+    "status": true,
+    "stock": 10,
+    "category": "celular"
+  }
+]
