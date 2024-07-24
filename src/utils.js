@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import {fileURLToPath} from 'url'
 import {dirname, resolve} from 'path'
 
+
 const __filename = fileURLToPath(import.meta.url)
 export const __dirname = dirname(__filename)
 
@@ -17,7 +18,6 @@ export async function readJsonFile(filePath) {
     }
 }
 
-// Función para escribir en un archivo JSON
 export async function writeJsonFile(filePath, data) {
     const fullPath = resolve(__dirname, filePath);
 
