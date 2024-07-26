@@ -5,12 +5,10 @@
 
 ## ✏ Descripción
 
-Proyecto Final de Back-end basado en una tienda de equipos tecnológicos Apple. En dicha tienda, de momento, se podrá manipular la creación de información de productos en una base de datos, leer archivos, actualizar información y eliminar productos. En la sección carrito se podra agregar productos en ciertos carritos incrementando la cantidad en productos iguales o agregandolos por primera vez. 
-
-
+Proyecto Final de Back-end basado en una tienda de equipos tecnológicos Apple. En dicha tienda, de momento, se podrá hacer la creación de un nuevo producto o eliminar un producto existente y ver en tiempo real los cambios, modificando los datos del Json. Asi tambien se podran ver los productos al recargar la pagina en la ruta raiz "/".
 ## 🛠 Herramientas y Dependencias
 
-### `POSTMAN` `Node-js` `Express` `Fs`
+### `POSTMAN` `Node-js` `Express` `Fs` `Express-handlebars` `Socket.io`
 
 
 ## Instalación
