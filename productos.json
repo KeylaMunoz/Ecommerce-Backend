@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Iphone 13",
+    "description": "120GB color rosa",
+    "code": "a1",
+    "price": "500",
+    "stock": "40",
+    "category": "calular",
+    "id": 1,
+    "status": true
+  },
+  {
+    "title": "Iphone 15 ProMax",
+    "description": "200GB color blanco",
+    "code": "a2",
+    "price": "800",
+    "stock": "30",
+    "category": "calular",
+    "id": 2,
+    "status": true
+  },
+  {
+    "title": "MacBoock",
+    "description": "12RAM color negro",
+    "code": "b1",
+    "price": "1500",
+    "stock": "15",
+    "category": "laptop",
+    "id": 3,
+    "status": true
+  },
+  {
+    "title": "Airpods",
+    "description": "Color blanco",
+    "code": "c1",
+    "price": "400",
+    "stock": "24",
+    "category": "accesorios",
+    "id": 4,
+    "status": true
+  }
+]

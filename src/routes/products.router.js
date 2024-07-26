@@ -47,7 +47,7 @@ router.post('/products', async (req, res) => {
     const { title, description, code, price, stock, category } = req.body
     
     if (!title || !description || !code || !price || !stock || !category) {
-        return res.status(400).json({ message: 'Todos los campos son requeridos' });
+        return res.status(400).json({ message: 'Todos los campos son requeridos', error });
     } 
 
     const status = true;

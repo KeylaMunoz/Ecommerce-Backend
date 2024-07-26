@@ -1,8 +1,21 @@
 
 {{!-- info que viene de servidor y se inyecta a MAIN--}}
 <div>
-    <h1>hola {{this.name}}</h1>
+    <h1>Lista de Productos</h1>
+    <div class="products-container" id="productsList">
+        {{#each products}}
+            <div class="product">
+                <p><strong>Nombre:</strong> {{this.title}}</p>
+                <p><strong>Descripción:</strong> {{this.description}}</p>
+                <p><strong>Código:</strong> {{this.code}}</p>
+                <p><strong>Precio:</strong> ${{this.price}}</p>
+                <p><strong>Stock:</strong> {{this.stock}}</p>
+                <p><strong>Categoría:</strong> {{this.category}}</p>
+                <p><strong>ID:</strong> {{this.id}}</p>
+                <br>
+            </div>
+        {{/each}}
+    </div>
 </div>
-
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script> 
+<script src="/js/home.js"></script> 

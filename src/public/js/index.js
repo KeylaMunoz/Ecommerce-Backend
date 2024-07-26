@@ -1,57 +1,71 @@
-const socket = io()  
-socket.emit('mensaje', 'soy el msj enviado')
-// socket.on('newProduct', (product) => {
-//     // Lógica para agregar el nuevo producto a la lista
-//     const ul = document.querySelector('ul');
-//     const li = document.createElement('li');
-//     li.innerHTML = 
-//         `<div>
-//             <p>Nombre ${product.title}</p>
-//             <p>Descripcion: ${product.description}</p>
-//             <p>Codigo ${product.code}</p>
-//             <p>Precio: $${product.price}</p>
-//             <p>En stock: ${product.stock} unidades</p>
-//             <p>Categoria: ${product.category}</p>
-//             <button class="agregar">Agregar producto</button>
-//         </div>`;
-//     ul.appendChild(li);
-// });
+// document.addEventListener("DOMContentLoaded", () => {
+const socket = io()
 
- 
+//1
+socket.emit('message', "comunicandome desde webSocket index")
 
-// let user;
-// let chatBox = document.getElementById('chatBox')
+const formulario = document.getElementById("formulario")
 
-// Swal.fire({
-//     title:"identificate",
-//      input:"text",
-//      text: "tu nombre",
-//      inputValidator: (value) => {
-//          return !value && "Necesitas identrificarte"
-//      },
-//      allowOutsideClick: false
-//  }).then(result => {
-//      user = result.value
-//      console.log(user)
-//  })
+formulario.addEventListener('submit', (event) => {
+    event.preventDefault();
 
-//  chatBox.addEventListener("keyup", e => {
-//      if(e.key === "Enter"){
-//          if(chatBox.value.trim().length>0){
-//              socket.emit("message",  {user: user, message: chatBox.value}
-//              )
-//              console.log(chatBox.value)
-//              chatBox.value= ""
-//          }
-//       }
-//  })
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const code = document.getElementById('code').value;
+        const price = document.getElementById('price').value;
+        const stock = document.getElementById('stock').value;
+        const category = document.getElementById('category').value;
+
+        if (event){
+            //2
+            socket.emit('productForm', {title,
+                description,
+                code,
+                price,
+                stock,
+                category});
+            console.log("enviado al socket")
+        }
+
+    // formulario.reset()
+});
+
+//3
+socket.on("products", data => {
+
+    const productsList = document.getElementById("productsList");
+
+    productsList.innerHTML = '';
+
+    data.forEach(product => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('product');
+
+        productElement.innerHTML = `
+            <p><strong>Nombre:</strong> ${product.title}</p>
+            <p><strong>Descripción:</strong> ${product.description}</p>
+            <p><strong>Código:</strong> ${product.code}</p>
+            <p><strong>Precio:</strong> $${product.price}</p>
+            <p><strong>Stock:</strong> ${product.stock}</p>
+            <p><strong>Categoría:</strong> ${product.category}</p>
+            <p><strong>ID:</strong> ${product.id}</p>
+             <button class="delete-button" data-id="${product.id}">Eliminar Producto</button>
+        `;
+
+        productsList.appendChild(productElement);
+    });
+
     
-//  socket.on("messageLogs", data =>{
-//      let log = document.getElementById("messageLogs")
-//      let messages = ""
-//      data.forEach(message => {
-//          messages = messages + `${message.user} dice: ${message.message} </br>` 
-//      });
-//      log.innerHTML = messages
-//  })
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const productId = button.getAttribute("data-id");
+            //4
+            socket.emit("deleteProduct", productId);
+            console.log("producto eliminado con el id", productId);
 
+        });
+    });
+});
+
+// })
