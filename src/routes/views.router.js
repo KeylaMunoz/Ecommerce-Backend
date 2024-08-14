@@ -1,26 +1,67 @@
 import express from 'express'
-import { readJsonFile } from '../utils.js';
+import { getProducts } from '../utils.js';
+import cartModel from '../models/cart.model.js';
+import productsModel from '../models/product.model.js';
 const router = express.Router();
 
-//ejemplo para mostrar por pantalla
-router.get("/", async (req, res) => {
-    try {
-        const productsSave = await readJsonFile('productos.json');
-        res.render('home', productsSave);
-    } catch (err) {
-        res.status(500).json({ error: 'No se pueden cargar los productos', err });
-    }
-    
-})
+router.get('/', async (req, res) => {
+try {
 
-router.get("/realtimeproducts", async (req, res) => {
-    try {
-        res.render('realTimeProducts');    
+    const result = await getProducts(req.query);
+
+    res.render('home', {
+        payload: result.docs,
+        totalPages: result.totalPages,
+        page: result.page,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevLink: result.prevLink = result.hasPrevPage ? `http://localhost:8080/?page=${result.prevPage}` : null,
+        nextLink: result.nextLink = result.hasNextPage ? `http://localhost:8080/?page=${result.nextPage}` : null,
+        isValid: result.docs.length > 0
+    });
+    console.log(result)
     } catch (err) {
+        console.error(err)
+        res.status(500).json({ error: 'No se pueden cargar los productos por categoria', err });
+    }
+
+}) 
+
+router.get("/cart", async (req, res) => {
+    try {
+          const cart = await cartModel.findOne();
+
+          if (!cart) {
+              return res.render('cart', { products: [], total: 0 });
+          }
+  
+          const productIds = cart.products.map(p => p.product);
+  
+          const products = await productsModel.find({ '_id': { $in: productIds } });
+  
+          const productsDetails = products.map(product => {
+              const cartItem = cart.products.find(p => p.product.toString() === product._id.toString());
+              const totalPrice = product.price * cartItem.quantity;
+
+              return {
+                  ...product.toObject(),
+                  quantity: cartItem.quantity,
+                  totalPrice: totalPrice
+              };
+          });
+            
+        const total = productsDetails.reduce((acc, product) => acc + (product.price * product.quantity), 0);
+  
+          res.render('cart', { products: productsDetails, total });
+
+    } catch (err) {
+        console.error(err)
         res.status(500).json({ error: 'No se pueden cargar los productos' });
     }
-    
+
 })
+
+
 
 
 export default router;

@@ -2,20 +2,61 @@
 {{!-- info que viene de servidor y se inyecta a MAIN--}}
 <div>
     <h1>Lista de Productos</h1>
+    <form method="GET" action="/">
+        <label for="category">Categoría:</label>
+        <select name="category" id="category">
+            <option value="">Todas</option>
+            <option value="alpargatas">Alpargatas</option>
+            <option value="boinas">Boinas</option>
+            <option value="bombillas">Bombillas</option>
+            <option value="mates">Mates</option>
+        </select>
+
+        <label for="sort">Ordenar por precio:</label>
+        <select name="sort" id="sort">
+            <option value="asc" >Menor a Mayor</option>
+            <option value="desc" >Mayor a Menor</option>
+        </select>
+
+        <label for="title">Buscar por nombre:</label>
+        <input type="text" name="title" id="title" placeholder="Nombre del producto">
+
+        <button type="submit">Aplicar Filtros</button>
+    </form>
+    <br />
+    {{#if isValid}}
     <div class="products-container" id="productsList">
-        {{#each products}}
+        {{#each payload}}
             <div class="product">
-                <p><strong>Nombre:</strong> {{this.title}}</p>
-                <p><strong>Descripción:</strong> {{this.description}}</p>
+                <img class="imgProducts" src="{{this.image}}" alt="">
+                <h3>{{this.title}}</h3>
+                <p>{{this.description}}</p>
                 <p><strong>Código:</strong> {{this.code}}</p>
-                <p><strong>Precio:</strong> ${{this.price}}</p>
                 <p><strong>Stock:</strong> {{this.stock}}</p>
                 <p><strong>Categoría:</strong> {{this.category}}</p>
-                <p><strong>ID:</strong> {{this.id}}</p>
+                <p><strong>Precio:</strong> ${{this.price}}</p>
+                <div>
+                    <button type="button" class="addToCartButton" data-id="{{this._id}}">Agregar al Carrito</button>
+                </div>
                 <br>
             </div>
         {{/each}}
     </div>
+    <br />
+    <div >
+        {{#if hasPrevPage}}
+            <a href={{prevLink}}>&lt;&lt; Anterior</a>
+        {{/if}}
+            &nbsp;
+            Pagina {{page}} de {{totalPages}}
+            &nbsp;
+        {{#if hasNextPage}}
+            <a href={{nextLink}}>Siguiente &gt;&gt;</a>
+        {{/if}}
+    </div>
+    {{else}}
+    <h1>No hay productos para mostrar</h1>
+    {{/if}} 
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/home.js"></script> 

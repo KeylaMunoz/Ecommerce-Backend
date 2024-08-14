@@ -1,44 +1,39 @@
-import { promises as fs } from 'fs';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
-
+import productsModel from './models/product.model.js';
 
 const __filename = fileURLToPath(import.meta.url)
 export const __dirname = dirname(__filename)
 
-//Funcion para leer el archivo
-export async function readJsonFile(fileJson) {
-    
+
+export const getProducts = async (queryParams) => {
+    let query = {};
+    let sort = {};
+    let page = parseInt(queryParams.page) || 1;
+    let limit = parseInt(queryParams.limit) || 10;
+    const { category, sort: sortOrder, title } = queryParams;
+
+    if (category) { query.category = category; }
+
+    if (title) { query.title = new RegExp(title, 'i'); }
+
+    if (sortOrder) { sort.price = sortOrder === 'asc' ? 1 : -1; }
+
+    const options = {
+        limit,
+        sort,
+        page,
+        lean: true
+    };
+
     try {
-        const data = await fs.readFile(fileJson, 'utf8');
-        return JSON.parse(data);
-
+        const result = await productsModel.paginate(query, options);
+        return result;
     } catch (err) {
-        res.status(400).json({ message: 'No se puede leer el archivo' });
+        console.error(err)
+        res.status(500).json({ error: 'No se pueden cargar los productos', err });
     }
-}
-
-//Funcion para escribir en el archivo
-export async function writeJsonFile(fileJson, data) {
-    try {
-        await fs.writeFile(fileJson, JSON.stringify(data, null, 2), 'utf8');
-    
-    } catch (err) {
-        res.status(400).json({ message: 'No se puede escribir en el archivo' });
-    }
-}
+};
 
 
-//Funcion para crear el archivo si no existe
-export async function existsJsonFile(fileJson) {
-    try {
-        await fs.access(fileJson);
-    
-    } catch (err) {
-        await writeJsonFile(fileJson, []);
-    }
-}
-
-
-
-export default { __dirname, readJsonFile, writeJsonFile, existsJsonFile}
+export default {__dirname, getProducts};

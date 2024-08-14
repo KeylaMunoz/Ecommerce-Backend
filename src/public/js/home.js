@@ -1,57 +1,21 @@
 
   socket = io()
 
-//  socket.emit('message', "comunicandome desde webSocket home")
+    const addToCartButtons = document.querySelectorAll('.addToCartButton');
 
-  socket.on("products", data => {
+    addToCartButtons.forEach(button =>  {
+      button.addEventListener('click', async () => {
+          const productId = button.getAttribute('data-id');
+        try {
+            await socket.emit('addToCart', productId );
+  
+            alert('Producto agregado al carrito');
+            
+        } catch (error) {
+            console.error(err)
+            res.status(500).json({ error: 'No se puede agregar al carrito', err });            
+        }
+      });
+  });
 
-    const productsList = document.getElementById("productsList");
 
-    productsList.innerHTML = '';
-
-    data.forEach(product => {
-        const productElement = document.createElement('div');
-        productElement.classList.add('product');
-
-        productElement.innerHTML = `
-            <h2>${product.title}</h2>
-            <p><strong>Descripción:</strong> ${product.description}</p>
-            <p><strong>Código:</strong> ${product.code}</p>
-            <p><strong>Precio:</strong> $${product.price}</p>
-            <p><strong>Stock:</strong> ${product.stock}</p>
-            <p><strong>Categoría:</strong> ${product.category}</p>
-            <p><strong>ID:</strong> ${product.id}</p>
-            <br>
-        `;
-
-        productsList.appendChild(productElement);
-    });
-
- })
- 
-//  socket.on("productsA", data => {
-//     console.log("recibidos", data);
-
-//      const productsList = document.getElementById("productsList");
-
-//      productsList.innerHTML = '';
-
-//      data.forEach(product => {
-//          const productElement = document.createElement('div');
-//          productElement.classList.add('product');
-
-//          productElement.innerHTML = `
-//              <h2>${product.title}</h2>
-//              <p><strong>Descripción:</strong> ${product.description}</p>
-//              <p><strong>Código:</strong> ${product.code}</p>
-//              <p><strong>Precio:</strong> $${product.price}</p>
-//              <p><strong>Stock:</strong> ${product.stock}</p>
-//              <p><strong>Categoría:</strong> ${product.category}</p>
-//              <p><strong>ID:</strong> ${product.id}</p>
-//              </br>
-//         `;
-
-//          productsList.appendChild(productElement);
-//      });
-
-//  })

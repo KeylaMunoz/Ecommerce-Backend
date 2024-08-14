@@ -1,131 +1,120 @@
-import express from 'express'
-import { readJsonFile, writeJsonFile, existsJsonFile } from '../utils.js';
-const router = express.Router();
+import { Router } from "express";
+import productsModel from "../models/product.model.js";
+import { getProducts } from "../utils.js";
 
+const router = Router()
 
- //GET
+//endpoint
 router.get('/products', async (req, res) => {
+    try {
+       
+        const result = await getProducts(req.query);
+    
+        res.send({ 
+            result: "success", 
+            payload: result.docs,
+            totalPages: result.totalPages,
+            prevPage: result.prevPage,
+            nextPage: result.nextPage,
+            page: result.page,
+            hasPrevPage: result.hasPrevPage,
+            hasNextPage: result.hasNextPage,
+            prevLink: result.prevLink = result.hasPrevPage ? `http://localhost:8080/?page=${result.prevPage}` : null,
+            nextLink: result.nextLink = result.hasNextPage ? `http://localhost:8080/?page=${result.nextPage}` : null,
+            isValid: result.docs.length > 0
+        });
+        console.log(result)
+        
+        } catch (err) {
+            console.error(err)
+            res.status(500).json({ error: 'No se pueden cargar los productos por categoria', err });
+        }
+    
+    })
+
+//GET
+router.get('/products/:pid', async (req, res) => {
+
+    const id = req.params.pid
 
     try {
 
-        const products = await readJsonFile('productos.json')
-        let limit = parseInt(req.query.limit) 
-    
-        if (limit) res.json(products.slice(0, limit))
-    
-        res.json(products)
-        
-    } catch (error) {
-        
-        res.status(404).json({ message: 'Producto no encontradooooo' });
-    }
-})
- 
+        let product = await productsModel.findById(id)
 
-router.get('/products/:pid', async (req, res) => { 
-    const id = parseInt(req.params.pid)
-
-    try {    
-
-        const products = await readJsonFile('productos.json')
-        const product = products.find(p => p.id === id)
-    
         if (!product) return res.status(404).json({message: "Este producto no existe"})
-        
-        res.json({product})
+
+        res.send({ result: "Producto encontrado", payload: product })
 
     } catch (err) {
-
-        res.status(404).json({ message: "Este producto no existe" })
+        console.error(err);
+        res.status(500).json({ message: "Error al buscar el producto", error: err.message })
     };
-}); 
-
-
-// //POST
-router.post('/products', async (req, res) => {
-
-    const { title, description, code, price, stock, category } = req.body
-    
-    if (!title || !description || !code || !price || !stock || !category) {
-        return res.status(400).json({ message: 'Todos los campos son requeridos', error });
-    } 
-
-    const status = true;
-
-    try {
-        await existsJsonFile('productos.json')
-
-        const products = await readJsonFile('productos.json')
-        const newProduct = {
-            id: products.length > 0 ? products[products.length - 1].id + 1 : 1, 
-            title, 
-            description, 
-            code, 
-            price, 
-            status, 
-            stock, 
-            category
-        } 
-    
-        products.push(newProduct)
-
-        await writeJsonFile('productos.json', products)
-        res.status(201).json(newProduct)
-        
-    } catch (err) {
-        console.log('Error:', err);
-        res.status(404).json({ message: 'No se puede crear el producto', error: err.message })        
-    }
 });
- 
 
-// //PUT
+//POST
+router.post("/products", async (req, res )=>{
+    let { title, description, code, price, stock, category, image } = req.body
+
+    if (!title || !description || !code || !price || !stock || !category || !image) {
+        return res.status(400).json({ message: 'Todos los campos son requeridos'});
+    }
+
+    let status = true;
+
+let product = await productsModel.create({title, description, code, price, stock, category, image, status})
+
+res.send ({result:"producto agregado", payload: product})
+})
+
+//PUT
 router.put('/products/:pid', async (req, res) => {
 
-    let id = parseInt(req.params.pid)
+    let id = req.params.pid
 
     try {
 
-        const products = await readJsonFile ('productos.json')
-        const product = products.find(p => p.id === id)
-        if (!product) return res.status(404).json({message: "Este producto no existe"})
-    
-        const { title, description, code, price, stock, category } = req.body
-        if (title) product.title = title;
-        if (description) product.description = description;
-        if (code) product.code = code;
-        if (price !== undefined) product.price = price;
-        if (stock !== undefined) product.stock = stock; 
-        if (category) product.category = category;
+        let productFind = await productsModel.findById(id)
 
-        await writeJsonFile('productos.json', products)
-        res.json({product})
-        
+        if (!productFind) return res.status(404).json({message: "Este producto no existe"})
+
+        let { title, description, code, price, stock, category, image } = req.body
+        if (title) productFind.title = title;
+        if (description) productFind.description = description;
+        if (code) productFind.code = code;
+        if (price !== undefined) productFind.price = price;
+        if (stock !== undefined) productFind.stock = stock;
+        if (category) productFind.category = category;
+        if (image) productFind.image = image;
+
+        let updatedProduct = await productFind.save();
+
+        res.send({ result: "Producto actualizado", payload: updatedProduct });
+
     } catch (err) {
-        
-        res.status(500).json({ error: 'Internal Server Error' })
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error', err })
     }
-             
+
 });
 
-// //DELETE
+//DELETE
+
 router.delete('/products/:pid', async (req, res) => {
-    
-    let pid = parseInt(req.params.pid)
+    const id = req.params.pid;
 
     try {
-        const products = await readJsonFile ('productos.json')
-        const filteredProducts = products.filter((product) => product.id !== pid)
-        
-        await writeJsonFile('productos.json', filteredProducts)
+        const result = await productsModel.deleteOne({ _id: id });
 
-        res.json({message:`Producto con id ${pid} eliminado`}) 
-        
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+
+        res.json({ message: `Producto con id ${id} eliminado` });
     } catch (err) {
         console.log('Error:', err);
-        res.status(404).json({ message: 'Producto no encontrado' })
+        res.status(500).json({ message: 'Error al eliminar el producto', err });
     }
-})
+});
 
 
 

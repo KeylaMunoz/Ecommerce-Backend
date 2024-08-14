@@ -1,0 +1,22 @@
+<div>
+    <h1>Lista de Productos</h1>
+    <div class="products-cart-container" id="productsList">
+        {{#each products}}
+            <div class="productCart" id="productList">
+                <img class="imgCart" src="{{this.image}}" alt="">
+                <p><strong>{{this.title}}</strong></p>
+                <p>{{this.description}}</p>
+                <p><strong>Cantidad: {{this.quantity}}</strong></p>
+                <p><strong>Precio: ${{this.price}}</strong></p>
+                <p><strong>Precio total: ${{totalPrice}}</strong></p>
+                <div>
+                    <button type="button" class="deleteProduct" data-id="{{this._id}}">Eliminar</button>
+                </div>
+                <br>
+            </div>
+            {{/each}}
+    </div>
+    <h2>Total ${{this.total}} </h2>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/cart.js"></script> 
