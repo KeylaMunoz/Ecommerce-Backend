@@ -10,8 +10,8 @@ const cartSchema = mongoose.Schema({
             quantity: { type: Number, default: 1 }
         }
     ]
-});
-
+}); 
+ 
 const cartModel = mongoose.model(cartCollection, cartSchema)
 
 export default cartModel   

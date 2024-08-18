@@ -5,11 +5,16 @@
 
 ## ✏ Descripción
 
-Proyecto Final de Back-end basado en una tienda de equipos tecnológicos Apple. En dicha tienda, de momento, se podrá hacer la creación de un nuevo producto o eliminar un producto existente y ver en tiempo real los cambios, modificando los datos del Json. Asi tambien se podran ver los productos al recargar la pagina en la ruta raiz "/".
+Proyecto Final de basado en una tienda de Indumentaria gaucha. Los datos de los productos se extraen mediante la base de datos Mongo. Dichos datos se muestrarán organizados mediante `Mongoose-paginate` la cual renderiza ordenadamente los productos que se almacenan en base de datos. 
+En la pagina se podrá agregar productosal carrito y también eliminarlos, esta informacion persistirá en la data base para futuras compras.
 ## 🛠 Herramientas y Dependencias
 
-### `POSTMAN` `Node-js` `Express` `Fs` `Express-handlebars` `Socket.io`
+### `POSTMAN` `Node-js` `Express` `Express-handlebars` `Socket.io` `Mongoose` `Mongoose-paginate` 
 
+## Endpoints de la API
+
+GET / 
+POST 
 
 ## Instalación
 ```bash

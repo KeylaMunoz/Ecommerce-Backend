@@ -46,7 +46,7 @@ const httpServer = app.listen( PORT, () => {
 const socketServer = new Server(httpServer)
 
 socketServer.on('connection', async (socketServer) => {
-    console.log(`Nuevo cliente conectado`)
+    console.log(`Nuevo cliente conectado`) 
 
     /* socketServer.on("productForm" , async (data) => {
         try {
@@ -119,11 +119,11 @@ socketServer.on('connection', async (socketServer) => {
 
         await cart.save();
 
-        await product.save();
+        await product.save();  
         
         console.log("producto eliminado y cantidad actualizada");
           
     })
 })
 
- 
+   
