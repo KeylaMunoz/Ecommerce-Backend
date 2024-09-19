@@ -26,7 +26,7 @@ const initializePassport = () => {
     try {
         return done (null, jwt_payload)
     } catch (error) {
-        return done (error)
+        return done (error) 
     }
 }))
 
@@ -89,6 +89,7 @@ const initializePassport = () => {
     }))
 }
 
+export default initializePassport
 // const LocalStrategy = local.Strategy
 
 //inicializamos estrategia local
@@ -154,5 +155,4 @@ const initializePassport = () => {
 
 
 
-export default initializePassport
 

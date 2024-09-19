@@ -1,7 +1,8 @@
 <h1>Perfil del Usuario</h1>
-<p>Nombre: {{user.first_name}} {{user.last_name}} </p>
+<p>Nombre y Apellido: {{user.first_name}} {{user.last_name}} </p>
 <p>Email: {{user.email}} </p>
 <p>Edad: {{user.age}} </p>
-<form action="/api/sessions/logout" method="POST"></form>
+
+<form action="/api/sessions/logout" method="POST">
     <button type="submit">Cerrar Sesión</button>
-</form>
+</form> 

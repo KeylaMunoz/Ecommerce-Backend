@@ -12,4 +12,4 @@ export const isNotAuthenticated = (req, res, next) => {
     } else {
         res.redirect('/profile');
     }
-};
+};     

@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 try {
 
     const result = await getProducts(req.query);
-
+    
     res.render('home', {
         payload: result.docs,
         totalPages: result.totalPages,
