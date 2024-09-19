@@ -1,14 +1,20 @@
 import express from "express"
 import handlebars from 'express-handlebars'
-import mongoose from "mongoose"
+import mongoose from './config/database.js'
+import cookieParser from "cookie-parser"
 import { Server } from "socket.io"
 import {__dirname} from "./utils.js"
+import session from "express-session"
+import MongoStore from "connect-mongo"
+import cookieRouter from './routes/cookie.router.js'
 import cartRouter from './routes/cart.router.js'
 import viewsRouter from './routes/views.router.js'
 import productsRouter from './routes/products.router.js'
+import sessionsRouter from './routes/api/sessions.router.js'
 import productsModel from "./models/product.model.js"
 import cartModel from "./models/cart.model.js"
-
+import initializePassport from "./config/passport.config.js"
+import passport from "passport"
 
 const app = express()
 const PORT = 8080
@@ -16,8 +22,24 @@ const PORT = 8080
 //middlewares
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(cookieParser())
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: "mongodb+srv://keylamunoz:12345@cluster0.bsigyng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+        // mongoOptions: {} ,
+        ttl: 15,
+    }),
+    secret: "claveSecreta",
+    resave: false,
+    saveUninitialized: true
+}))
 
- 
+//passport
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
+
 //handlebars
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname + '/views')
@@ -27,17 +49,12 @@ app.use(express.static(__dirname + '/public'))
 //rutas
 app.use("/api", productsRouter)
 app.use("/api", cartRouter)
+app.use('/api/sessions', sessionsRouter)
 app.use("/", viewsRouter)
-
-
-mongoose.connect("mongodb+srv://keylamunoz:12345@cluster0.bsigyng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-.then(() => {
-    console.log("conectado a la base")
-})
-.catch(error => {
-    console.log("error", error)
-})
+app.use("/", cookieRouter) 
  
+//session
+
 
 //socket
 const httpServer = app.listen( PORT, () => {
@@ -46,7 +63,7 @@ const httpServer = app.listen( PORT, () => {
 const socketServer = new Server(httpServer)
 
 socketServer.on('connection', async (socketServer) => {
-    console.log(`Nuevo cliente conectado`) 
+    console.log(`Nuevo cliente conectado`)
 
     /* socketServer.on("productForm" , async (data) => {
         try {
@@ -62,7 +79,7 @@ socketServer.on('connection', async (socketServer) => {
         } catch (error) {
             console.error("Error al agregar el producto:", error);
         }
-    }); */
+    }); */ 
 
 //agregar productos al carrito
     socketServer.on("addToCart", async (productId) => {
@@ -71,9 +88,9 @@ socketServer.on('connection', async (socketServer) => {
             if (!cart) {
                 cart = new cartModel();
             }
-            
+
             const product = await productsModel.findById(productId);
-            
+
             const existingProduct = cart.products.find(p => p.product.toString() === productId);
 
             if (existingProduct) {
@@ -114,16 +131,16 @@ socketServer.on('connection', async (socketServer) => {
         } else {
             cart.products = cart.products.filter(p => p.product.toString() !== productId);
         }
-        
+
         product.stock += 1;
 
         await cart.save();
 
-        await product.save();  
-        
+        await product.save();
+
         console.log("producto eliminado y cantidad actualizada");
-          
+
     })
 })
 
-   
+

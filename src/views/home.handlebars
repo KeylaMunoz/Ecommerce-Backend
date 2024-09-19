@@ -1,7 +1,12 @@
 
 {{!-- info que viene de servidor y se inyecta a MAIN--}}
 <div>
-    <h1>Lista de Productos</h1>
+    <h1>Bienvenido {{user.first_name}} {{user.last_name}} </h1>
+    <form action="/api/session/logaut" method="POST">
+        <button type="submit" >Cerrar sesión</button>
+    </form>
+    
+    <h2>Productos</h2>
     <form method="GET" action="/">
         <label for="category">Categoría:</label>
         <select name="category" id="category">

@@ -2,7 +2,22 @@ import express from 'express'
 import { getProducts } from '../utils.js';
 import cartModel from '../models/cart.model.js';
 import productsModel from '../models/product.model.js';
+import {isAuthenticated, isNotAuthenticated} from '../middleware/auth.js'
+
 const router = express.Router();
+
+ router.get('/login', isNotAuthenticated, (req, res) => {
+    res.render('login')
+})
+
+router.get('/register', isNotAuthenticated, (req, res) => {
+     res.render('register')
+} )
+
+router.get('/profile', isAuthenticated, (req, res) => {
+    res.render("profile", {user: req.session.user})
+} ) 
+
 
 router.get('/', async (req, res) => {
 try {
