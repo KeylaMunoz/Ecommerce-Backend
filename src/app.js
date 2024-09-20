@@ -1,6 +1,5 @@
 import express from "express"
 import handlebars from 'express-handlebars'
-import mongoose from './config/database.js'
 import cookieParser from "cookie-parser"
 import { Server } from "socket.io"
 import {__dirname} from "./utils.js"
@@ -64,22 +63,6 @@ const socketServer = new Server(httpServer)
 
 socketServer.on('connection', async (socketServer) => {
     console.log(`Nuevo cliente conectado`)
-
-    /* socketServer.on("productForm" , async (data) => {
-        try {
-            data.status = true;
-
-            const newProduct = new productsModel(data);
-            await newProduct.save();
-
-            let productsSave = await productsModel.find()
-
-            socketServer.emit("products", productsSave)
-
-        } catch (error) {
-            console.error("Error al agregar el producto:", error);
-        }
-    }); */ 
 
 //agregar productos al carrito
     socketServer.on("addToCart", async (productId) => {
