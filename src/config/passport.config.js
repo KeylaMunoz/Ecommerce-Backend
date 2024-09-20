@@ -47,7 +47,7 @@ const initializePassport = () => {
             try {
                 let user = await userService.findOne({email: username})
                 if (user){
-                    console.log("El usuario existe")
+                    console.log("El usuario ya existe")
                     return done(null, false)
                 }
 
@@ -60,11 +60,9 @@ const initializePassport = () => {
                 }
 
                 let result = await userService.create(newUser)
+                console.log("Usuario registrado correctamente")
                 return done(null, result)
                 
-                // let token = jwt.sign({ email: result.email, role: 'user' }, 'coderSecret', { expiresIn: '24h' });
-
-                // res.send({ status: "success", message: "Usuario registrado", token });
             } catch
              (error) {
 
@@ -77,7 +75,7 @@ const initializePassport = () => {
         try {
             const user = await userService.findOne({email:username})
             if(!user){
-                console.log("El usuario no existe")
+                console.log("El usuario no existe, regístrate!")
                 return done (null, false)
             }
             if(!isValidPassword(user,password)) return done(null, false)

@@ -9,59 +9,45 @@ import { passportCall } from '../../utils.js';
 const router = Router();
 initializePassport()
 
-router.post('/register', passport.authenticate('register', { failureRedirect: '/failregister' }), async (req, res) => {
-    res.send({ status: "success", message: "usuario registrado" })
+router.post('/register', passport.authenticate('register', { failureRedirect: 'failregister' }), async (req, res) => {
+    res.status(200).send({ status: "success", message: "usuario registrado" })
 });
 
+router.get('/failregister', async (req, res) => {
+    console.log('estategia fallida')
+    res.status(401).send({ error: "Failed"})
+} )
 
-router.post('/login',  passport.authenticate('login', { failureRedirect: '/faillogin' }), async (req, res) => {
+router.post('/login',  passport.authenticate('login', { failureRedirect: 'faillogin' }), async (req, res) => {
     
     const { email, password } = req.body;
     
     try {
-        if (!req.user) return res.status(400).send({status: "error", error: "Credenciales invalidas"})
-
-        const token = jwt.sign({ email, password }, 'coderSecret', { expiresIn: '24h' });
+        const token = jwt.sign({ email, password, role: "user" }, 'coderSecret', { expiresIn: '24h' });
 
         req.session.user = {
             first_name: req.user.first_name,
         last_name: req.user.last_name,
         age: req.user.age,
-        email: req.user.email
+        email: req.user.email 
         }
-        console.log(req.user, token)
+        console.log("token:", token)
 
-        res.redirect('/profile');
-        // res.send({ status: "success", payload: req.user})
-        
+         res.status(200).redirect('/profile'); 
+
     } catch (error) {
         res.status(500).send({ error: "Error en el inicio de sesión: " + error });
     }
 });
 
 router.get('/faillogin', (req, res) => {
-    
-    res.send({ error: "Login fallido"})
+    res.status(401).send({ error: "Credenciales inválidas"})
 })
 
 
-router.get('/failregister', async (req, res) => {
-    console.log('estategia fallida')
-    res.send({ error: "Failed"})
-} )
 
 router.get('/current', passportCall('jwt'), (req, res) => {
-    const { email, role } = req.user;
-
-    // Generar un nuevo token basado en la información del usuario actual
-    const token = jwt.sign({ email, role }, 'coderSecret', { expiresIn: '24h' });
-
-    // Devolver tanto el token como los datos del usuario en un objeto
-    res.status(200).send({
-        status: 'success',
-        user: req.user,
-        token: token
-    });
+    res.send(req.user)
 });
 
 
