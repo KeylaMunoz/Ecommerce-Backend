@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import config from "./config.js";
 
-mongoose.connect("mongodb+srv://keylamunoz:12345@cluster0.bsigyng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
+mongoose.connect(config.mongoUrl);
 
 const db = mongoose.connection;
 
@@ -11,3 +12,6 @@ db.once('open', () => {
 
 export default db;
 
+   
+  
+ 

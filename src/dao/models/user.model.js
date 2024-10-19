@@ -11,6 +11,6 @@ const userSchema = new mongoose.Schema({
     role: { type: String, default: "user"}
 });
 
-const firstCollection = mongoose.model(userCollection, userSchema);
+const userModel = mongoose.model(userCollection, userSchema);
 
-export default firstCollection
+export default userModel

@@ -3,20 +3,21 @@ import handlebars from 'express-handlebars'
 import cookieParser from "cookie-parser"
 import { Server } from "socket.io"
 import {__dirname} from "./utils.js"
-import session from "express-session"
+import session from 'express-session'
 import MongoStore from "connect-mongo"
-import cookieRouter from './routes/cookie.router.js'
 import cartRouter from './routes/cart.router.js'
 import viewsRouter from './routes/views.router.js'
 import productsRouter from './routes/products.router.js'
 import sessionsRouter from './routes/api/sessions.router.js'
-import productsModel from "./models/product.model.js"
-import cartModel from "./models/cart.model.js"
-import initializePassport from "./config/passport.config.js"
-import passport from "passport"
+import productsModel from "./dao/models/product.model.js"
+import cartModel from "./dao/models/cart.model.js"
+import passport from 'passport'
+import config from "./config/config.js"
+import db from "./config/database.js"
+import { serializeUser, deserializeUser, registerStrategy, loginStrategy } from "./controllers/session.controller.js"
 
-const app = express()
-const PORT = 8080
+
+const app = express() 
 
 //middlewares
 app.use(express.json())
@@ -24,19 +25,23 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: "mongodb+srv://keylamunoz:12345@cluster0.bsigyng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-        // mongoOptions: {} ,
+        mongoUrl: config.mongoUrl,
         ttl: 15,
     }),
     secret: "claveSecreta",
     resave: false,
     saveUninitialized: true
-}))
+})) 
 
 //passport
-initializePassport()
+
 app.use(passport.initialize())
 app.use(passport.session())
+registerStrategy();
+loginStrategy();
+serializeUser();
+deserializeUser();
+
 
 
 //handlebars
@@ -50,14 +55,11 @@ app.use("/api", productsRouter)
 app.use("/api", cartRouter)
 app.use('/api/sessions', sessionsRouter)
 app.use("/", viewsRouter)
-app.use("/", cookieRouter) 
  
-//session
-
 
 //socket
-const httpServer = app.listen( PORT, () => {
-    console.log(`Server runing on port ${PORT}`)
+const httpServer = app.listen( config.port, () => {
+    console.log(`Server runing on poooort ${config.port}`)
 })
 const socketServer = new Server(httpServer)
 

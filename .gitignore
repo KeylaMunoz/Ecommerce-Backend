@@ -5,7 +5,8 @@ src/public/js/realTimeProducts.js
 #
 src/views/realTimeProducts.handlebars
 
-
+#
+.env
 
 
 
