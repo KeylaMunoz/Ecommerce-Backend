@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 import { Server } from "socket.io"
 import {__dirname} from "./utils.js"
 import session from 'express-session'
+import nodemailer from 'nodemailer'
 import MongoStore from "connect-mongo"
 import cartRouter from './routes/cart.router.js'
 import viewsRouter from './routes/views.router.js'
@@ -11,6 +12,7 @@ import productsRouter from './routes/products.router.js'
 import sessionsRouter from './routes/api/sessions.router.js'
 import productsModel from "./dao/models/product.model.js"
 import cartModel from "./dao/models/cart.model.js"
+import emailRouter from "./routes/email.router.js"
 import passport from 'passport'
 import config from "./config/config.js"
 import db from "./config/database.js"
@@ -55,7 +57,21 @@ app.use("/api", productsRouter)
 app.use("/api", cartRouter)
 app.use('/api/sessions', sessionsRouter)
 app.use("/", viewsRouter)
+app.use("/", emailRouter)
  
+
+//nodemailer
+const transport = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    auth: {
+        user: "keyla.keyla.munoz@gmail.com",
+        pass: config.mailingPass
+    }
+})
+
+
+
 
 //socket
 const httpServer = app.listen( config.port, () => {
